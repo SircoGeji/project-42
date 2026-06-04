@@ -1,0 +1,30 @@
+name: Random Commit
+
+on:
+  schedule:
+    - cron: "0 * * * *" # triggers every hour, on the hour
+
+permissions:
+  contents: write # needed to push commits
+
+jobs:
+  commit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Commit at a random hour
+        run: |
+          # Roll a 24-sided die - only proceed on 0, giving ~1 commit per day
+          roll=$((RANDOM % 24))
+          if [[ $roll -ne 0 && $roll -ne 5 && $roll -ne 11 && $roll -ne 17 && $roll -ne 23 ]]; then
+              echo "Not this hour. Skipping"
+              exit 0
+          fi
+
+          echo "$(date -u)" >> research-log.txt
+          git config user.email "${{ secrets.GIT_USER_EMAIL }}"
+          git config user.name "SircoGeji"
+          git add research-log.txt
+          git commit -m "chore: research log $(date -u +%Y-%m-%d)"
+          git push
