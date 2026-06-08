@@ -15,9 +15,9 @@ jobs:
 
       - name: Commit at a random hour
         run: |
-          # Roll a 24-sided die - only proceed on 0, giving ~1 commit per day
+          # Roll a 24-sided die - only proceed on 0, 5, 11, 17 and 23, giving ~5 commit per day
           roll=$((RANDOM % 24))
-          if [[ $roll -ne 0 && $roll -ne 5 && $roll -ne 11 && $roll -ne 17 && $roll -ne 23 ]]; then
+          if [[ $roll -ne 0 || $roll -ne 5 || $roll -ne 11 || $roll -ne 17 || $roll -ne 23 ]]; then
               echo "Not this hour. Skipping"
               exit 0
           fi
