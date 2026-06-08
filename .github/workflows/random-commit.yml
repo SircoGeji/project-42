@@ -17,10 +17,14 @@ jobs:
         run: |
           # Roll a 24-sided die - only proceed on 0, 5, 11, 17 and 23, giving ~5 commit per day
           roll=$((RANDOM % 24))
-          if [[ $roll -ne 0 || $roll -ne 5 || $roll -ne 11 || $roll -ne 17 || $roll -ne 23 ]]; then
-              echo "Not this hour. Skipping"
-              exit 0
-          fi
+          case "$roll" in
+              0|5|11|17|23)
+                  ;;
+              *)
+                  echo "Not this hour. Skipping"
+                  exit 0
+                  ;;
+          esac
 
           echo "$(date -u)" >> research-log.txt
           git config user.email "${{ secrets.GIT_USER_EMAIL }}"
