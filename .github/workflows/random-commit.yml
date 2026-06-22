@@ -1,12 +1,11 @@
 name: Random Commit
 
 on:
-  workflow_dispatch:
   schedule:
-    - cron: "0 * * * *"
+    - cron: "0 * * * *" # triggers every hour, on the hour
 
 permissions:
-  contents: write
+  contents: write # needed to push commits
 
 jobs:
   commit:
@@ -16,15 +15,20 @@ jobs:
 
       - name: Commit at a random hour
         run: |
-          set -ex
-
-          roll=0
+          # Roll a 24-sided die - only proceed on 0, 5, 11, 17 and 23, giving ~5 commit per day
+          roll=$((RANDOM % 24))
+          case "$roll" in
+              0|5|11|17|23)
+                  ;;
+              *)
+                  echo "Not this hour. Skipping"
+                  exit 0
+                  ;;
+          esac
 
           echo "$(date -u)" >> research-log.txt
-
           git config user.email "${{ secrets.GIT_USER_EMAIL }}"
           git config user.name "SircoGeji"
-
           git add research-log.txt
           git commit -m "chore: research log $(date -u +%Y-%m-%d)"
           git push
